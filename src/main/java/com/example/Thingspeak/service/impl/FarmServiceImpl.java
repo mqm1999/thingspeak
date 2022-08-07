@@ -15,10 +15,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import javax.transaction.Transactional;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.springframework.http.HttpMethod.GET;
 
 @Service
 @RequiredArgsConstructor
@@ -61,6 +65,36 @@ public class FarmServiceImpl implements FarmService {
         return Boolean.TRUE;
     }
 
+    @Override
+    public Boolean updateControlStatus(String device) throws JsonProcessingException, URISyntaxException {
+        Boolean controlMode = Boolean.FALSE;
+        if (updateLatestData()) {
+            if (getAllDataRecord().isEmpty()) {
+                return Boolean.FALSE;
+            }
+            // get control check for manual/auto (1: auto, 0: manual)
+            controlMode = getAllDataRecord().get(getAllDataRecord().size() - 1).getControlCheck();
+        }
+        if (controlMode) {
+            return Boolean.FALSE;
+        }
+        switch (device) {
+            case Constant.LIGHT:
+                String changeLampStatusUrl = Constant.LAMP_UPDATE_URL + convertStatusToString(!(getAllDataRecord().get(getAllDataRecord().size() - 1).getLampStatus()));
+                URI lampUri = new URI(changeLampStatusUrl);
+                restTemplate.exchange(lampUri, GET, null, Void.class);
+                return Boolean.TRUE;
+            case Constant.PUMP:
+                String changePumpStatusUrl = Constant.PUMP_UPDATE_URL + convertStatusToString(!(getAllDataRecord().get(getAllDataRecord().size() - 1).getPumpStatus()));
+                URI pumpUri = new URI(changePumpStatusUrl);
+                restTemplate.exchange(pumpUri, GET, null, Void.class);
+                return Boolean.TRUE;
+            default:
+                break;
+        }
+        return Boolean.TRUE;
+    }
+
     private void createDataRecord(JsonNode node, LocalDateTime createdTime) {
         DataRecord singleRecord = DataRecord.builder()
                 .airTemperature(node.get("field2").asDouble())
@@ -71,7 +105,17 @@ public class FarmServiceImpl implements FarmService {
                 .pumpStatus(node.get("field6").asBoolean())
                 .createdTime(createdTime)
                 .updatedBy(UPDATED_USER)
+                .controlCheck(node.get("field7").asBoolean())
                 .build();
         farmRepository.save(singleRecord);
+    }
+
+    private String convertStatusToString(Boolean status) {
+        final String TRUE = "1";
+        final String FALSE = "0";
+        if (status.equals(Boolean.TRUE)) {
+            return TRUE;
+        }
+        return FALSE;
     }
 }

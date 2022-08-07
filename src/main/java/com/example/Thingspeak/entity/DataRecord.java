@@ -60,4 +60,7 @@ public class DataRecord implements Serializable {
 
     @Column(name = "updated_by")
     private String updatedBy;
+
+    @Column(name = "control_check")
+    private Boolean controlCheck;
 }
