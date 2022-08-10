@@ -101,11 +101,11 @@ public class FarmServiceImpl implements FarmService {
                 .airHumidity(node.get("field3").asDouble())
                 .lightIntensity(node.get("field1").asDouble())
                 .soilMoisture(node.get("field4").asDouble())
-                .lampStatus(node.get("field5").asBoolean())
-                .pumpStatus(node.get("field6").asBoolean())
+                .lampStatus(convertIntegerToBoolean(node.get("field5").asInt()))
+                .pumpStatus(convertIntegerToBoolean(node.get("field6").asInt()))
                 .createdTime(createdTime)
                 .updatedBy(UPDATED_USER)
-                .controlCheck(node.get("field7").asBoolean())
+                .controlCheck(convertIntegerToBoolean(node.get("field7").asInt()))
                 .build();
         farmRepository.save(singleRecord);
     }
@@ -117,5 +117,14 @@ public class FarmServiceImpl implements FarmService {
             return TRUE;
         }
         return FALSE;
+    }
+
+    private Boolean convertIntegerToBoolean(Integer status) {
+        if (status == 1) {
+            return Boolean.TRUE;
+        } else if (status == 0) {
+            return Boolean.FALSE;
+        }
+        return Boolean.FALSE;
     }
 }
