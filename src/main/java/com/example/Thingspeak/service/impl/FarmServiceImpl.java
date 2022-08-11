@@ -97,9 +97,9 @@ public class FarmServiceImpl implements FarmService {
 
     private void createDataRecord(JsonNode node, LocalDateTime createdTime) {
         DataRecord singleRecord = DataRecord.builder()
-                .airTemperature(node.get("field2").asDouble())
-                .airHumidity(node.get("field3").asDouble())
-                .lightIntensity(node.get("field1").asDouble())
+                .airTemperature(node.get("field1").asDouble())
+                .airHumidity(node.get("field2").asDouble())
+                .lightIntensity(node.get("field3").asDouble())
                 .soilMoisture(node.get("field4").asDouble())
                 .lampStatus(convertIntegerToBoolean(node.get("field5").asInt()))
                 .pumpStatus(convertIntegerToBoolean(node.get("field6").asInt()))
