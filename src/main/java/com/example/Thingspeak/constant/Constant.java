@@ -7,4 +7,6 @@ public class Constant {
     public static final String LIGHT = "light";
     public static final String LAMP_UPDATE_URL = "https://api.thingspeak.com/update?api_key=K5WBCHD6FEU4BYIR&field5=";
     public static final String PUMP_UPDATE_URL = "https://api.thingspeak.com/update?api_key=K5WBCHD6FEU4BYIR&field6=";
+    public static final String CONTROL = "control";
+    public static final String CONTROL_UPDATE_URL = "https://api.thingspeak.com/update?api_key=K5WBCHD6FEU4BYIR&field7=";
 }

@@ -89,6 +89,11 @@ public class FarmServiceImpl implements FarmService {
                 URI pumpUri = new URI(changePumpStatusUrl);
                 restTemplate.exchange(pumpUri, GET, null, Void.class);
                 return Boolean.TRUE;
+            case Constant.CONTROL:
+                String changeControlStatusUrl = Constant.CONTROL_UPDATE_URL + convertStatusToString(!(getAllDataRecord().get(getAllDataRecord().size() - 1).getControlCheck()));
+                URI controlUri = new URI(changeControlStatusUrl);
+                restTemplate.exchange(controlUri, GET, null, Void.class);
+                return Boolean.TRUE;
             default:
                 break;
         }
